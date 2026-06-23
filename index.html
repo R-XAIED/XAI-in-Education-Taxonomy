@@ -19,15 +19,12 @@ body {
 }
 
 .container {
-    max-width: 1250px;
+    max-width: 1600px;
     margin: auto;
     padding: 30px;
 }
 
 nav {
-    display: flex;
-    align-items: center;
-    gap: 10px;
     border-bottom: 1px solid #e2e8f0;
     padding-bottom: 15px;
     margin-bottom: 30px;
@@ -51,9 +48,9 @@ h1 {
 
 .grid {
     display: grid;
-    grid-template-columns: repeat(5, minmax(200px, 1fr));
+    grid-template-columns: repeat(5, minmax(260px, 1fr));
     gap: 16px;
-    min-width: 1100px;
+    min-width: 1450px;
 }
 
 .column {
@@ -63,7 +60,7 @@ h1 {
 }
 
 .column-header {
-    height: 70px;
+    height: 64px;
     border-bottom: 1px solid #f1f5f9;
     margin-bottom: 16px;
     display: flex;
@@ -100,19 +97,17 @@ h1 {
 
 .block button {
     width: 100%;
-    min-height: 76px;
+    min-height: 52px;
     border: none;
     border-radius: 8px;
     color: white;
     font-weight: 600;
-    font-size: 13px;
-    padding: 10px;
+    font-size: 12px;
+    padding: 8px 10px;
     cursor: pointer;
-    transition: .2s;
-}
-
-.block button:hover {
-    opacity: .9;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .children {
@@ -144,40 +139,64 @@ h1 {
 
 .info {
     display: inline-block;
-    width: 15px;
-    height: 15px;
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
     border: 1px solid #64748b;
+    background: white;
+    color: #64748b;
     text-align: center;
     line-height: 14px;
     font-size: 10px;
+    font-weight: bold;
     margin-left: 5px;
-    cursor: help;
-    position: relative;
+    cursor: pointer;
 }
 
-.tooltip {
+.modal-overlay {
     display: none;
-    position: absolute;
-    left: 20px;
-    top: 0;
-    width: 260px;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.modal {
     background: white;
-    border: 1px solid #ddd;
-    padding: 8px;
-    border-radius: 6px;
-    box-shadow: 0 4px 10px rgba(0,0,0,.1);
-    z-index: 999;
+    width: 100%;
+    max-width: 480px;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 20px 40px rgba(0,0,0,.2);
 }
 
-.info:hover .tooltip {
-    display: block;
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 12px;
 }
 
-@media (max-width: 1200px) {
-    .grid {
-        min-width: 1100px;
-    }
+.modal-title {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.modal-close {
+    border: none;
+    background: transparent;
+    font-size: 24px;
+    cursor: pointer;
+    color: #64748b;
+}
+
+.modal-body {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #334155;
 }
 </style>
 </head>
@@ -186,9 +205,7 @@ h1 {
 
 <div class="container">
 
-<nav>
-XAI in Education
-</nav>
+<nav>XAI in Education</nav>
 
 <h1>
 Taxonomy of User-centred Explainable Artificial Intelligence in Education
@@ -200,48 +217,23 @@ Taxonomy of User-centred Explainable Artificial Intelligence in Education
 
 </div>
 
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title" id="modalTitle">Information</div>
+            <button class="modal-close" id="modalClose">&times;</button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+    </div>
+</div>
+
 <script>
 const icons = {
-users: `
-<svg viewBox="0 0 24 24">
-<path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-<circle cx="10" cy="7" r="4"/>
-<path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-<path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-</svg>
-`,
-
-puzzle: `
-<svg viewBox="0 0 24 24">
-<path d="M19 13h-2a2 2 0 1 0 0 4h2v4H5v-4h2a2 2 0 1 0 0-4H5V3h4v2a2 2 0 1 0 4 0V3h6z"/>
-</svg>
-`,
-
-balance: `
-<svg viewBox="0 0 24 24">
-<path d="M12 3v18"/>
-<path d="M5 7h14"/>
-<path d="M7 7l-3 5h6z"/>
-<path d="M20 12l-3-5-3 5z"/>
-<path d="M8 21h8"/>
-</svg>
-`,
-
-chart: `
-<svg viewBox="0 0 24 24">
-<path d="M3 3v18h18"/>
-<path d="M7 16v-5"/>
-<path d="M12 16V8"/>
-<path d="M17 16v-9"/>
-</svg>
-`,
-
-leaf: `
-<svg viewBox="0 0 24 24">
-<path d="M20 4C10 4 4 10 4 20"/>
-<path d="M20 4c0 8-4 14-12 16"/>
-</svg>
-`
+users: `<svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+puzzle: `<svg viewBox="0 0 24 24"><path d="M19 13h-2a2 2 0 1 0 0 4h2v4H5v-4h2a2 2 0 1 0 0-4H5V3h4v2a2 2 0 1 0 4 0V3h6z"/></svg>`,
+balance: `<svg viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M5 7h14"/><path d="M7 7l-3 5h6z"/><path d="M20 12l-3-5-3 5z"/><path d="M8 21h8"/></svg>`,
+chart: `<svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 16v-5"/><path d="M12 16V8"/><path d="M17 16v-9"/></svg>`,
+leaf: `<svg viewBox="0 0 24 24"><path d="M20 4C10 4 4 10 4 20"/><path d="M20 4c0 8-4 14-12 16"/></svg>`
 };
 
 const taxonomy = [
@@ -256,50 +248,18 @@ title:"XAI System Properties",
 icon:"puzzle",
 colors:["#3E2724","#6D4B3E","#8D6E63","#B8A8A3","#C8B9B3"],
 items:[
-{
-label:"AIED application area",
-children:[
-"Adaptive systems & personalisation",
-"Profiling & prediction",
-"Assessment & evaluation",
-"Intelligent tutoring systems"
-]
-},
-{
-label:"Explanation scope",
-children:["Global explanations","Local explanations"]
-},
-{
-label:"Explanation type",
-children:[
-"Feature-based",
-"Model specifications",
-"GenAI-based",
-"Contrastive",
-"Rule-based",
-"Similar example-based",
-"Dependence plots"
-]
-},
-{
-label:"Explanation format",
-children:["Textual","Graphical","Numerical"]
-},
-{
-label:"Interactivity of explanations",
-children:["Passive","Interactive"]
-}
+{label:"AIED application area", children:["Adaptive systems & personalisation","Profiling & prediction","Assessment & evaluation","Intelligent tutoring systems"]},
+{label:"Explanation scope", children:["Global explanations","Local explanations"]},
+{label:"Explanation type", children:["Feature-based","Model specifications","GenAI-based","Contrastive","Rule-based","Similar example-based","Dependence plots"]},
+{label:"Explanation format", children:["Textual","Graphical","Numerical"]},
+{label:"Interactivity of explanations", children:["Passive","Interactive"]}
 ]
 },
 {
 title:"Compared Conditions",
 icon:"balance",
 colors:["#7F2A24","#B3473A","#D97A6C"],
-items:[
-"Explanations vs. no explanations",
-"XAI system vs. no XAI system",
-"Different explanations"
-]
+items:["Explanations vs. no explanations","XAI system vs. no XAI system","Different explanations"]
 },
 {
 title:"Outcome Variables & Methods",
@@ -307,50 +267,12 @@ icon:"chart",
 colors:["#2F4D5D","#4F7FAA","#90B3D0","#0050B0","#86AEE3"],
 items:[
 {type:"section",label:"Explanation effects"},
-{
-label:"Affective effects",
-children:[
-"Confidence in task with system (SR)",
-"Ease of use of the system (SR)",
-"Understanding of the system (SR)",
-"Usefulness of the system (SR)",
-"Trust in the system (SR)"
-]
-},
-{
-label:"Cognitive effects",
-children:[
-"Cognitive load (SR)",
-"Learning outcomes",
-"Understanding of the system (SR)"
-]
-},
-{
-label:"Behavioral effects",
-children:[
-"Reliance on AI output",
-"Self-regulated learning behaviors",
-"Task efficiency",
-"Task effectiveness"
-]
-},
+{label:"Affective effects", children:["Confidence in task with system (SR)","Ease of use of the system (SR)","Understanding of the system (SR)","Usefulness of the system (SR)","Trust in the system (SR)"]},
+{label:"Cognitive effects", children:["Cognitive load (SR)","Learning outcomes","Understanding of the system (SR)"]},
+{label:"Behavioral effects", children:["Reliance on AI output","Self-regulated learning behaviors","Task efficiency","Task effectiveness"]},
 {type:"section",label:"Explanation evaluations"},
-{
-label:"Affective evaluations",
-children:[
-"Actionability of explanations (SR)",
-"Correctness of explanations (SR)",
-"Trust in explanations (SR)",
-"Usefulness of explanations (SR)"
-]
-},
-{
-label:"Cognitive evaluations",
-children:[
-"Understanding of explanation",
-"Understanding of explanation (SR)"
-]
-}
+{label:"Affective evaluations", children:["Actionability of explanations (SR)","Correctness of explanations (SR)","Trust in explanations (SR)","Usefulness of explanations (SR)"]},
+{label:"Cognitive evaluations", children:["Understanding of explanation","Understanding of explanation (SR)"]}
 ]
 },
 {
@@ -376,6 +298,32 @@ info:"Participation in the study has real-world consequences for educational sta
 ];
 
 const grid = document.getElementById("taxonomyGrid");
+const modalOverlay = document.getElementById("modalOverlay");
+const modalBody = document.getElementById("modalBody");
+const modalClose = document.getElementById("modalClose");
+
+function openModal(text) {
+    modalBody.textContent = text;
+    modalOverlay.style.display = "flex";
+}
+
+function closeModal() {
+    modalOverlay.style.display = "none";
+}
+
+modalClose.addEventListener("click", closeModal);
+
+modalOverlay.addEventListener("click", event => {
+    if (event.target === modalOverlay) {
+        closeModal();
+    }
+});
+
+document.addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+        closeModal();
+    }
+});
 
 taxonomy.forEach(group => {
     const column = document.createElement("div");
@@ -410,6 +358,7 @@ taxonomy.forEach(group => {
 
         const button = document.createElement("button");
         button.textContent = label;
+        button.title = label;
         button.style.backgroundColor = color;
 
         block.appendChild(button);
@@ -418,25 +367,31 @@ taxonomy.forEach(group => {
             const childrenDiv = document.createElement("div");
             childrenDiv.className = "children";
 
-            let html = "<ul>";
+            const ul = document.createElement("ul");
 
             item.children.forEach(child => {
+                const li = document.createElement("li");
+
                 if (typeof child === "object") {
-                    html += `
-                        <li>
-                            ${child.text}
-                            <span class="info">i
-                                <span class="tooltip">${child.info}</span>
-                            </span>
-                        </li>
-                    `;
+                    li.append(child.text);
+
+                    const info = document.createElement("span");
+                    info.className = "info";
+                    info.textContent = "i";
+                    info.addEventListener("click", event => {
+                        event.stopPropagation();
+                        openModal(child.info);
+                    });
+
+                    li.appendChild(info);
                 } else {
-                    html += `<li>${child}</li>`;
+                    li.textContent = child;
                 }
+
+                ul.appendChild(li);
             });
 
-            html += "</ul>";
-            childrenDiv.innerHTML = html;
+            childrenDiv.appendChild(ul);
 
             button.addEventListener("click", () => {
                 childrenDiv.style.display =
