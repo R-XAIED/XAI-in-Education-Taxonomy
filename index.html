@@ -168,6 +168,7 @@ h1 {
 }
 </style>
 </head>
+
 <body>
 
 <div class="container">
@@ -187,7 +188,6 @@ Taxonomy of User-centred Explainable Artificial Intelligence in Education
 </div>
 
 <script>
-
 const taxonomy = [
 {
 title:"End users",
@@ -322,95 +322,79 @@ info:"Participation in the study has real-world consequences for educational sta
 const grid = document.getElementById("taxonomyGrid");
 
 taxonomy.forEach(group => {
+    const column = document.createElement("div");
+    column.className = "column";
 
-const column = document.createElement("div");
-column.className = "column";
+    column.innerHTML = `
+        <div class="column-header">
+            <div class="column-title">${group.title}</div>
+            <div class="column-icon">${group.icon}</div>
+        </div>
+    `;
 
-column.innerHTML = `
-<div class="column-header">
-<div class="column-title">${group.title}</div>
-<div class="column-icon">${group.icon}</div>
-</div>
-`;
+    let colorIndex = 0;
 
-let colorIndex = 0;
+    group.items.forEach(item => {
+        if (item.type === "section") {
+            const divider = document.createElement("div");
+            divider.className = "section-divider";
+            divider.textContent = item.label;
+            column.appendChild(divider);
+            return;
+        }
 
-group.items.forEach(item => {
+        const block = document.createElement("div");
+        block.className = "block";
 
-if(item.type === "section"){
-const divider = document.createElement("div");
-divider.className = "section-divider";
-divider.textContent = item.label;
-column.appendChild(divider);
-return;
-}
+        const color = group.colors[colorIndex] || group.colors[group.colors.length - 1];
+        colorIndex++;
 
-const block = document.createElement("div");
-block.className = "block";
+        const expandable = typeof item === "object" && item.children;
+        const label = expandable ? item.label : item;
 
-const color = group.colors[colorIndex] || group.colors[group.colors.length-1];
-colorIndex++;
+        const button = document.createElement("button");
+        button.textContent = label;
+        button.style.backgroundColor = color;
 
-const expandable =
-typeof item === "object" &&
-item.children;
+        block.appendChild(button);
 
-const label = expandable ? item.label : item;
+        if (expandable) {
+            const childrenDiv = document.createElement("div");
+            childrenDiv.className = "children";
 
-const button = document.createElement("button");
-button.textContent = label;
-button.style.backgroundColor = color;
+            let html = "<ul>";
 
-block.appendChild(button);
+            item.children.forEach(child => {
+                if (typeof child === "object") {
+                    html += `
+                        <li>
+                            ${child.text}
+                            <span class="info">i
+                                <span class="tooltip">${child.info}</span>
+                            </span>
+                        </li>
+                    `;
+                } else {
+                    html += `<li>${child}</li>`;
+                }
+            });
 
-if(expandable){
+            html += "</ul>";
+            childrenDiv.innerHTML = html;
 
-const childrenDiv = document.createElement("div");
-childrenDiv.className = "children";
+            button.addEventListener("click", () => {
+                childrenDiv.style.display =
+                    childrenDiv.style.display === "block" ? "none" : "block";
+            });
 
-let html = "<ul>";
+            block.appendChild(childrenDiv);
+        }
 
-item.children.forEach(child => {
+        column.appendChild(block);
+    });
 
-if(typeof child === "object"){
-
-html += `
-<li>
-${child.text}
-<span class="info">i
-<span class="tooltip">${child.info}</span>
-</span>
-</li>
-`;
-
-}else{
-html += `<li>${child}</li>`;
-}
-
+    grid.appendChild(column);
 });
-
-html += "</ul>";
-
-childrenDiv.innerHTML = html;
-
-button.addEventListener("click", () => {
-childrenDiv.style.display =
-childrenDiv.style.display === "block"
-? "none"
-: "block";
-});
-
-block.appendChild(childrenDiv);
-}
-
-column.appendChild(block);
-
-});
-
-grid.appendChild(column);
-
-});
-
 </script>
 
 </body>
