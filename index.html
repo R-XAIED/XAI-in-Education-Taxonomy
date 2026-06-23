@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XAI in Education Taxonomy</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Inter, Arial, sans-serif;
+    background: white;
+    color: #0f172a;
+}
+
+.container {
+    max-width: 1250px;
+    margin: auto;
+    padding: 30px;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 15px;
+    margin-bottom: 30px;
+    font-weight: 600;
+    color: #475569;
+}
+
+h1 {
+    font-size: 2.8rem;
+    margin-bottom: 35px;
+    line-height: 1.15;
+}
+
+.taxonomy-wrapper {
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 20px;
+    overflow-x: auto;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(200px, 1fr));
+    gap: 16px;
+    min-width: 1100px;
+}
+
+.column {
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 16px;
+}
+
+.column-header {
+    height: 70px;
+    border-bottom: 1px solid #f1f5f9;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.column-title {
+    font-size: 13px;
+    font-weight: bold;
+    text-transform: uppercase;
+    line-height: 1.4;
+}
+
+.column-icon {
+    font-size: 22px;
+}
+
+.block {
+    margin-bottom: 10px;
+}
+
+.block button {
+    width: 100%;
+    min-height: 76px;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 10px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.block button:hover {
+    opacity: .9;
+}
+
+.children {
+    display: none;
+    margin-top: 8px;
+    padding: 10px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.children ul {
+    padding-left: 18px;
+}
+
+.section-divider {
+    margin: 14px 0;
+    text-align: center;
+    font-size: 9px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #64748b;
+    border-top: 1px dashed #94a3b8;
+    border-bottom: 1px dashed #94a3b8;
+    padding: 6px 0;
+}
+
+.info {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: 1px solid #64748b;
+    text-align: center;
+    line-height: 14px;
+    font-size: 10px;
+    margin-left: 5px;
+    cursor: help;
+    position: relative;
+}
+
+.tooltip {
+    display: none;
+    position: absolute;
+    left: 20px;
+    top: 0;
+    width: 260px;
+    background: white;
+    border: 1px solid #ddd;
+    padding: 8px;
+    border-radius: 6px;
+    box-shadow: 0 4px 10px rgba(0,0,0,.1);
+    z-index: 999;
+}
+
+.info:hover .tooltip {
+    display: block;
+}
+
+@media (max-width: 1200px) {
+    .grid {
+        min-width: 1100px;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<nav>
+📖 XAI in Education
+</nav>
+
+<h1>
+Taxonomy of User-centred Explainable Artificial Intelligence in Education
+</h1>
+
+<div class="taxonomy-wrapper">
+<div class="grid" id="taxonomyGrid"></div>
+</div>
+
+</div>
+
+<script>
+
+const taxonomy = [
+{
+title:"End users",
+icon:"👥",
+colors:["#DA7010","#FFA757","#FFB979","#FFD1A6"],
+items:["Students","Educators","Study advisors","School leaders"]
+},
+{
+title:"XAI System Properties",
+icon:"🧩",
+colors:["#3E2724","#6D4B3E","#8D6E63","#B8A8A3","#C8B9B3"],
+items:[
+{
+label:"AIED application area",
+children:[
+"Adaptive systems & personalisation",
+"Profiling & prediction",
+"Assessment & evaluation",
+"Intelligent tutoring systems"
+]
+},
+{
+label:"Explanation scope",
+children:["Global explanations","Local explanations"]
+},
+{
+label:"Explanation type",
+children:[
+"Feature-based",
+"Model specifications",
+"GenAI-based",
+"Contrastive",
+"Rule-based",
+"Similar example-based",
+"Dependence plots"
+]
+},
+{
+label:"Explanation format",
+children:["Textual","Graphical","Numerical"]
+},
+{
+label:"Interactivity of explanations",
+children:["Passive","Interactive"]
+}
+]
+},
+{
+title:"Compared Conditions",
+icon:"⚖️",
+colors:["#7F2A24","#B3473A","#D97A6C"],
+items:[
+"Explanations vs. no explanations",
+"XAI system vs. no XAI system",
+"Different explanations"
+]
+},
+{
+title:"Outcome Variables & Methods",
+icon:"📊",
+colors:["#2F4D5D","#4F7FAA","#90B3D0","#0050B0","#86AEE3"],
+items:[
+{type:"section",label:"Explanation effects"},
+{
+label:"Affective effects",
+children:[
+"Confidence in task with system (SR)",
+"Ease of use of the system (SR)",
+"Understanding of the system (SR)",
+"Usefulness of the system (SR)",
+"Trust in the system (SR)"
+]
+},
+{
+label:"Cognitive effects",
+children:[
+"Cognitive load (SR)",
+"Learning outcomes",
+"Understanding of the system (SR)"
+]
+},
+{
+label:"Behavioral effects",
+children:[
+"Reliance on AI output",
+"Self-regulated learning behaviors",
+"Task efficiency",
+"Task effectiveness"
+]
+},
+{type:"section",label:"Explanation evaluations"},
+{
+label:"Affective evaluations",
+children:[
+"Actionability of explanations (SR)",
+"Correctness of explanations (SR)",
+"Trust in explanations (SR)",
+"Usefulness of explanations (SR)"
+]
+},
+{
+label:"Cognitive evaluations",
+children:[
+"Understanding of explanation",
+"Understanding of explanation (SR)"
+]
+}
+]
+},
+{
+title:"Ecological Validity",
+icon:"🌿",
+colors:["#436E50","#8BC08F","#AED6AE","#E5E789"],
+items:[
+"Impact",
+"User-input data relation",
+{
+label:"Output realism",
+children:[
+{
+text:"High",
+info:"Participation in the study has real-world consequences for educational stakeholders"
+},
+"Low"
+]
+},
+"Learning and teaching activity"
+]
+}
+];
+
+const grid = document.getElementById("taxonomyGrid");
+
+taxonomy.forEach(group => {
+
+const column = document.createElement("div");
+column.className = "column";
+
+column.innerHTML = `
+<div class="column-header">
+<div class="column-title">${group.title}</div>
+<div class="column-icon">${group.icon}</div>
+</div>
+`;
+
+let colorIndex = 0;
+
+group.items.forEach(item => {
+
+if(item.type === "section"){
+const divider = document.createElement("div");
+divider.className = "section-divider";
+divider.textContent = item.label;
+column.appendChild(divider);
+return;
+}
+
+const block = document.createElement("div");
+block.className = "block";
+
+const color = group.colors[colorIndex] || group.colors[group.colors.length-1];
+colorIndex++;
+
+const expandable =
+typeof item === "object" &&
+item.children;
+
+const label = expandable ? item.label : item;
+
+const button = document.createElement("button");
+button.textContent = label;
+button.style.backgroundColor = color;
+
+block.appendChild(button);
+
+if(expandable){
+
+const childrenDiv = document.createElement("div");
+childrenDiv.className = "children";
+
+let html = "<ul>";
+
+item.children.forEach(child => {
+
+if(typeof child === "object"){
+
+html += `
+<li>
+${child.text}
+<span class="info">i
+<span class="tooltip">${child.info}</span>
+</span>
+</li>
+`;
+
+}else{
+html += `<li>${child}</li>`;
+}
+
+});
+
+html += "</ul>";
+
+childrenDiv.innerHTML = html;
+
+button.addEventListener("click", () => {
+childrenDiv.style.display =
+childrenDiv.style.display === "block"
+? "none"
+: "block";
+});
+
+block.appendChild(childrenDiv);
+}
+
+column.appendChild(block);
+
+});
+
+grid.appendChild(column);
+
+});
+
+</script>
+
+</body>
+</html>
